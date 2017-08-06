@@ -7,11 +7,6 @@ struct stack {
     int top;
 } st;
 
-//int isFull() {
-//    if (st.top >= MAXSIZE - 1) return 1;
-//    else return 0;
-//}
-
 int isEmpty() {
     if (st.top == -1) return 1;
     else return 0;
@@ -38,9 +33,11 @@ int main() {
 
     char c;
     while ((c = fgetc(input)) != EOF) {
-        if (c == '(' || c == '{' || c == '[') push(c);
-        else {
-            if ((c == ')' && !isEmpty() && peek() == '(') || (c == '}' && !isEmpty() && peek() == '{') || (c == ']' && !isEmpty() && peek() == '[')) pop();
+        if (c != '\n') {
+            if (c == '(' || c == '{' || c == '[') push(c);
+            else if (c == ')' && !isEmpty() && peek() == '(') pop();
+            else if (c == '}' && !isEmpty() && peek() == '{') pop();
+            else if (c == ']' && !isEmpty() && peek() == '[') pop();
             else {
                 fprintf(output, "no");
                 exit(0);
