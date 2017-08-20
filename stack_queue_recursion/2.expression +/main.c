@@ -8,9 +8,8 @@ struct operations {
 } op;
 
 struct numbers {
-    long long int n[MAXSIZE];
+    long int n[MAXSIZE];
     int top;
-//    void (*push)(char);
 } num;
 
 void push_op(char data) {
@@ -18,7 +17,7 @@ void push_op(char data) {
     op.o[op.top] = data;
 }
 
-void push_num(long long int data) {
+void push_num(long int data) {
     ++num.top;
     num.n[num.top] = data;
 }
@@ -51,7 +50,7 @@ int priority(char data) {
 }
 
 void res(char op) {
-    long long int l, r;
+    long int l, r;
     r = num.n[num.top];
     pop_num();
     l = num.n[num.top];
@@ -100,7 +99,7 @@ int main() {
         pop_op();
     }
 
-    fprintf(output, "%lli", num.n[num.top]);
+    fprintf(output, "%li", num.n[num.top]);
 
     return 0;
 }
