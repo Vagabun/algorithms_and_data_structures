@@ -37,7 +37,8 @@ int isEmpty() {
 }
 
 int ifNumber (char n) {
-    return (n >= '0' && n <= '9');
+    n -= '0';
+    return (n >= 0 && n <= 9);
 }
 
 int ifOperation (char op) {
@@ -67,28 +68,21 @@ int main() {
     op.top = -1;
     num.top = -1;
 
-
-//    int i[10], counter_1 = 0, counter_2 = 0;
-
     FILE *input = fopen("input.txt", "r");
     FILE *output = fopen("output.txt", "w");
 
-    char s, curr_op, temp;
+    char s, curr_op;
     int curr_pr;
-
 
     while (fscanf(input, "%c", &s) != EOF) {
         if (s != '\n') {
             if (ifNumber(s)) {
-                int full_num = s-'0';
-                while (1) {
-                    fscanf(input, "%c", &s);
-                    if (ifNumber(s))
-                        full_num = full_num*10+(s-'0');
-                    else break;
+                int full_num = s - '0';
+                while ((fscanf(input, "%c", &s) != EOF) && ifNumber(s)) {
+                    full_num = full_num * 10 + (s - '0');
                 }
                 push_num(full_num);
-                ungetc((int)s, input);
+                if (!ifNumber(s)) ungetc(s, input);
             }
             else if (ifOperation(s)) {
                 curr_op = s;
@@ -101,29 +95,12 @@ int main() {
             }
         }
     }
+    while (!isEmpty()) {
+        res(op.o[op.top]);
+        pop_op();
+    }
+
     fprintf(output, "%lli", num.n[num.top]);
-
-
-//        while (!feof(input)) {
-//            fscanf(input, "%c", &s);
-//            if (s != '\n') {
-//                if (ifNumber(s)) {
-//                    int full_num = s-'0';
-//                    while ((fscanf(input, "%c", &s) != EOF) && ifNumber(s)) full_num = full_num*10+(s-'0');
-//                    push_num(full_num);
-//                    ungetc(s, input);
-//                }
-//                else if (ifOperation(s)) {
-//                    curr_op = s;
-//                    curr_pr = priority(curr_op);
-//                    while (!isEmpty() && ifOperation(op.o[op.top]) && priority(op.o[op.top]) >= curr_pr) {
-//                        res(op.o[op.top]);
-//                        pop_op();
-//                    }
-//                    push_op(curr_op);
-//                }
-//            }
-//        }
 
     return 0;
 }
