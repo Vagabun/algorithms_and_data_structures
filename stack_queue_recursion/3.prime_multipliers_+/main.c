@@ -1,7 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
 #define MAX_SIZE 10010
-//#define MIN(a, b) ((a < b) ? a : b)
 
 struct q {
     unsigned long long int q[MAX_SIZE];
@@ -11,6 +9,7 @@ struct q {
 typedef struct q QUEUE;
 
 void make(QUEUE *inst) {
+//    -> - dereference
     inst->top = 1;
     inst->tail = 0;
 }
