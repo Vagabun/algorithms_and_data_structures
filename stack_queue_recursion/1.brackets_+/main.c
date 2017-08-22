@@ -48,5 +48,8 @@ int main() {
     if (isEmpty()) fprintf(output, "yes");
     else fprintf(output, "no");
 
+    fclose(input);
+    fclose(output);
+
     return 0;
 }

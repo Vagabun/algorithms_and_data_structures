@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #define MAXSIZE 1010
 
 struct operations {
@@ -100,6 +99,9 @@ int main() {
     }
 
     fprintf(output, "%li", num.n[num.top]);
+
+    fclose(input);
+    fclose(output);
 
     return 0;
 }
