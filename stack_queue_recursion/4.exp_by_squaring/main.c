@@ -1,18 +1,18 @@
 #include <stdio.h>
 
 struct array{
-    int a[40][40];
-} arr;
+    double a[40][40];
+    int size;
+};
 
 struct array multiply_arr(struct array a, struct array b, int size) {
     struct array c;
+    c.size = size;
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
-//            c.a[i][j] = a.a[i][j] * b.a[i][j] + a.a[i][j+1] * b.a[i+1][j];
-            int sum = 0;
+            double sum = 0;
             for (int k = 0; k < size; ++k) {
                 sum = sum + a.a[i][k] * b.a[k][j];
-//                c.a[i][j] += a.a[i][k] * b.a[k][j];
             }
             c.a[i][j] = sum;
         }
@@ -20,35 +20,37 @@ struct array multiply_arr(struct array a, struct array b, int size) {
     return c;
 }
 
-
 struct array pow(struct array x, long long int n) {
     if (n == 1) return x;
-    if (n % 2 == 0) return pow(multiply_arr(x, x, 2), n/2);
-    else return multiply_arr(x, pow(x, n - 1), 2);
+    if (n % 2 == 0) return pow(multiply_arr(x, x, x.size), n/2);
+    else return multiply_arr(x, pow(x, n - 1), x.size);
 }
 
 int main() {
 
-//    long long int N;
-//    int P;
-//
-//    int a[40][40];
-    struct array a1;
-    a1.a[0][0] = 1;
-    a1.a[0][1] = 2;
-    a1.a[1][0] = 3;
-    a1.a[1][1] = 4;
+    FILE *input = fopen("input.txt", "r");
+    FILE *output = fopen("output.txt", "w");
 
-//    printf("%d", a1.a[1][1]);
+    long long int N;
+    int P;
+    struct array a1, a2;
 
-    struct array a2 = pow(a1, 3);
-    for (int i = 0; i < 2; ++i) {
-        for (int j = 0; j < 2; ++j) {
-            printf("%d ", a2.a[i][j]);
+    fscanf(input, "%lli %d", &N, &P);
+    a1.size = P;
+    for (int i = 0; i < a1.size; ++i) {
+        for (int j = 0; j < a1.size; ++j) {
+            fscanf(input, "%lf", &a1.a[i][j]);
         }
-        printf("\n");
     }
 
-//    printf("%.6f", pow(a, 20));
+    a2 = pow(a1, N);
+
+    for (int k = 0; k < P; ++k) {
+        for (int l = 0; l < P; ++l) {
+            fprintf(output, "%.6lf ", a2.a[k][l]);
+        }
+        fprintf(output, "\n");
+    }
+
     return 0;
 }
