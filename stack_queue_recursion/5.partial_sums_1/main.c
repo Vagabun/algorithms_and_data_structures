@@ -14,8 +14,7 @@ int main() {
     FILE *input = fopen("input.txt", "r");
     FILE *output = fopen("output.txt", "w");
 
-    long int n, Q, a, b;
-    int i, j;
+    long int n, Q, a, b, i, j;
 
     long int *arr = malloc(MAXSIZE * sizeof(long int));
     long int *part_sums = malloc(MAXSIZE * sizeof(long int));
