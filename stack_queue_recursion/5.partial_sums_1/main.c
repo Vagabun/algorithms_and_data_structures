@@ -15,7 +15,7 @@ int main() {
     FILE *output = fopen("output.txt", "w");
 
     long int n, Q, a, b;
-    int i;
+    int i, j;
 
     long int *arr = malloc(MAXSIZE * sizeof(long int));
     long int *part_sums = malloc(MAXSIZE * sizeof(long int));
@@ -27,10 +27,14 @@ int main() {
 
     precalc(part_sums, arr, n);
 
-    for (int j = 0; j < Q; ++j) {
+    for (j = 0; j < Q; ++j) {
         fscanf(input, "%li %li", &a, &b);
         fprintf(output, "%li ", part_sums[b]-part_sums[a-1]);
     }
 
+    free(arr);
+    free(part_sums);
+    fclose(input);
+    fclose(output);
     return 0;
 }
