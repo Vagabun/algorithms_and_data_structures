@@ -17,7 +17,7 @@ int main() {
     long int n, Q, a, b, i, j;
 
     long int *arr = malloc(MAXSIZE * sizeof(long int));
-    long long int *part_sums = malloc(MAXSIZE * sizeof(long int));
+    long long int *part_sums = malloc(MAXSIZE * sizeof(long long int));
 
     fscanf(input, "%li %li", &n, &Q);
     for (i = 1; i <= n; ++i) {
