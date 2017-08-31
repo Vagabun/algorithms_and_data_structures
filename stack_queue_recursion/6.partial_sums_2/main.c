@@ -1,11 +1,11 @@
 #include <stdio.h>
 
 long int arr[1010][1010];
-long int part_sums[1010][1010];
+long long int part_sums[1010][1010];
 
 void precalc(const int n, const int m) {
     int i, j;
-    long int t;
+    long long int t;
     for (j = 0; j <= m; ++j)
         part_sums[0][j] = 0;
 
@@ -22,7 +22,8 @@ void precalc(const int n, const int m) {
 int main() {
 
     int n, m, i, j, a, b, alpha, beta;
-    long int Q, k, sum;
+    long int Q, k;
+    long long int sum;
 
     FILE *input = fopen("input.txt", "r");
     FILE *output = fopen("output.txt", "w");
@@ -39,8 +40,11 @@ int main() {
     for (k = 0; k < Q; ++k) {
         fscanf(input, "%d %d %d %d", &a, &b, &alpha, &beta);
         sum = part_sums[b][beta] - part_sums[a-1][beta] - part_sums[b][alpha-1] + part_sums[a-1][alpha-1];
-        fprintf(output, "%li ", sum);
+        fprintf(output, "%lli ", sum);
     }
+
+    fclose(input);
+    fclose(output);
 
     return 0;
 }
