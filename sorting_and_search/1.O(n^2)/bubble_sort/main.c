@@ -18,19 +18,12 @@ int main() {
         if (arr[i] > arr[i-1])
             continue;
         j = i;
-        while (j > 1 && arr[j] < arr[j-1]) {
+        while ((j > 0) && (arr[j] < arr[j-1])) {
             long long temp = arr[j];
             arr[j] = arr[j-1];
             arr[j-1] = temp;
             --j;
         }
-//        for (j = 0; j < counter - 1; ++j) {
-//            if (arr[j] > arr[j+1]) {
-//                long long temp = arr[j];
-//                arr[j] = arr[j+1];
-//                arr[j+1] = temp;
-//            }
-//        }
     }
 
     for (k = 0; k < counter; ++k)
