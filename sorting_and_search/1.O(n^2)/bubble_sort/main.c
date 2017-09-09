@@ -29,5 +29,8 @@ int main() {
     for (k = 0; k < counter; ++k)
         fprintf(output, "%lli ", arr[k]);
 
+    fclose(input);
+    fclose(output);
+
     return 0;
 }
