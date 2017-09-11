@@ -7,7 +7,7 @@ int main() {
     FILE *output = fopen("input.txt", "w");
     unsigned long x, i;
     srand(time(NULL));
-    for (i = 0; i < 1000000; ++i) {
+    for (i = 0; i < 3000000; ++i) {
         x = rand();
         x <<= 15;
         x ^= rand();
