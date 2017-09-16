@@ -15,25 +15,22 @@ long long random(long long n) {
 void quicksort(long long a, long long b) {
     if (a >= b)
         return;
-    long long m = random(b-a+1)+a;
-//    long long m = (a + b)/2;
     //pivot point
+    long long m = random(b - a + 1) + a;
     long long k = arr[m];
     long long l = a - 1;
     long long r = b + 1;
     while (1) {
-        do {
+        while (1) {
             ++l;
             if (arr[l] >= k)
                 break;
         }
-        while (arr[l] >= k);
-        do {
+        while (1) {
             --r;
             if (arr[r] <= k)
                 break;
         }
-        while (arr[r] <= k);
         if (l >= r)
             break;
         long long tmp = arr[l];
@@ -60,6 +57,9 @@ int main() {
 
     for (int i = 0; i < counter; ++i)
         fprintf(output, "%lli ", arr[i]);
+
+    fclose(input);
+    fclose(output);
 
     return 0;
 }
