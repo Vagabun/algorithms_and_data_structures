@@ -27,7 +27,7 @@ int main() {
                 long long j = i - h;
                 while (j >= 0 && arr[j] > y) {
                     arr[j+h] = arr[j];
-                    j = j - h;
+                    j -= h;
                 }
                 arr[j+h] = y;
                 i += h;
