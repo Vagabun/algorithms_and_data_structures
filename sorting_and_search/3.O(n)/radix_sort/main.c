@@ -1,12 +1,21 @@
 #include <stdio.h>
 #include <math.h>
 
-long long x[3000010];
-long long y[3000010];
+long long source[3000010];
+long long dest[3000010];
 long long count[10];
 
 int get_digit(long long n, int i) {
     return (int)(n/pow(10, i-1)) % 10;
+}
+
+int get_length(long long m) {
+    int l = 0;
+    while (m > 0) {
+        ++l;
+        m /= 10;
+    }
+    return l;
 }
 
 int main() {
@@ -18,46 +27,37 @@ int main() {
     while (fscanf(input, "%lli", &n) != EOF) {
         if (n > max)
             max = n;
-        x[counter] = n;
+        source[counter] = n;
         ++counter;
     }
 
-    
-
-    int k = 0;
-    while (max > 0) {
-        ++k;
-        max /= 10;
-    }
-
     int i;
-    long long j, l, m;
-    for (i = 1; i <= k; ++i) {
+    long long j;
+    for (i = 1; i <= get_length(max); ++i) {
         for (j = 0; j < 10; ++j)
             count[j] = 0;
-        for (l = 0; l < counter; ++l)
-            ++count[get_digit(x[l], i)];
+        for (j = 0; j < counter; ++j)
+            ++count[get_digit(source[j], i)];
         long long sum = 0;
-        for (m = 0; m < 10; ++m) {
-            long long tmp = count[m];
-            count[m] = sum;
+        for (j = 0; j < 10; ++j) {
+            long long tmp = count[j];
+            count[j] = sum;
             sum += tmp;
         }
-        for (int i1 = 0; i1 < counter; ++i1) {
-            int d = get_digit(x[i1], i);
-            y[count[d]] = x[i1];
+        for (j = 0; j < counter; ++j) {
+            int d = get_digit(source[j], i);
+            dest[count[d]] = source[j];
             ++count[d];
         }
-        for (int k1 = 0; k1 < counter; ++k1)
-            x[k1] = y[k1];
+        for (j = 0; j < counter; ++j)
+            source[j] = dest[j];
     }
 
-    for (int l1 = 0; l1 < counter; ++l1)
-        fprintf(output, "%lli ", x[l1]);
+    for (int j = 0; j < counter; ++j)
+        fprintf(output, "%lli ", source[j]);
 
+    fclose(input);
+    fclose(output);
 
-
-//    printf("%d", get_digit(523, 3));
-//    printf("%d", k);
     return 0;
 }

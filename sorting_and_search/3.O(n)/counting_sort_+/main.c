@@ -38,5 +38,8 @@ int main() {
     for (i = 1; i < counter; ++i)
         fprintf(output, "%lli ", y[i]);
 
+    fclose(input);
+    fclose(output);
+
     return 0;
 }
