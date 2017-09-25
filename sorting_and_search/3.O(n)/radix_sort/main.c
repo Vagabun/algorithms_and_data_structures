@@ -1,16 +1,19 @@
 #include <stdio.h>
-#include <math.h>
 
 long long source[3000010];
 long long dest[3000010];
 long long count[10];
 
-int get_digit(long long n, int i) {
-    return (int)(n/pow(10, i-1)) % 10;
+long long get_digit(long long n, long long i) {
+    i -= 1;
+    long long j, p = 1;
+    for (j = 0; j < i; ++j)
+        p *= 10;
+    return ((n / p) % 10);
 }
 
-int get_length(long long m) {
-    int l = 0;
+long long get_length(long long m) {
+    long long l = 0;
     while (m > 0) {
         ++l;
         m /= 10;
@@ -31,8 +34,7 @@ int main() {
         ++counter;
     }
 
-    int i;
-    long long j;
+    long long i, j;
     for (i = 1; i <= get_length(max); ++i) {
         for (j = 0; j < 10; ++j)
             count[j] = 0;
@@ -45,7 +47,7 @@ int main() {
             sum += tmp;
         }
         for (j = 0; j < counter; ++j) {
-            int d = get_digit(source[j], i);
+            long long d = get_digit(source[j], i);
             dest[count[d]] = source[j];
             ++count[d];
         }
@@ -53,7 +55,7 @@ int main() {
             source[j] = dest[j];
     }
 
-    for (int j = 0; j < counter; ++j)
+    for (j = 0; j < counter; ++j)
         fprintf(output, "%lli ", source[j]);
 
     fclose(input);
