@@ -65,10 +65,10 @@ long long search(long long a, long long b, long long k) {
         arr[l] = arr[r];
         arr[r] = tmp;
     }
-    if (k < l)
-        return search(a, l, k);
+    if (k <= r)
+        return search(a, r, k);
     else
-        return search(r, b, k);
+        return search(r+1, b, k);
 }
 
 int main() {
@@ -85,7 +85,7 @@ int main() {
 
     srand(time(NULL));
 
-    printf("%lli", search(0, counter-1, k));
+    printf("%lli", search(0, counter-1, k-1));
 
 
 //    for (int i = 0; i < counter; ++i)
