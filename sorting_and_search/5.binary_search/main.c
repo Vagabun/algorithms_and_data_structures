@@ -2,29 +2,7 @@
 
 long long x[1000010];
 
-long long binary_search_1(long long n, long long k) {
-    long long a = 1, b = n;
-    // check invariant
-    if (x[a] > k)
-        return 0;
-    if (x[a] == k)
-        return a;
-    if (x[b] < k)
-        return 0;
-    while (a + 1 < b) {
-        long long m = (a + b)/2;
-        if (x[m] < k)
-            a = m;
-        else
-            b = m;
-    }
-    if (x[b] == k)
-        return b;
-    else
-        return 0;
-}
-
-long long binary_search_2(long long n, long long k) {
+long long binary_search_less_than(long long n, long long k) {
     long long a = 1, b = n;
     if (x[a] > k)
         return 0;
@@ -45,27 +23,47 @@ long long binary_search_2(long long n, long long k) {
         return 0;
 }
 
-long long binary_search_3(long long n, long long k) {
+long long binary_search_equal(long long n, long long k) {
     long long a = 1, b = n;
-    if (x[a] < k)
+    if (x[a] > k)
         return 0;
-    if (x[b] > k)
-        return b;
-    if (x[b] == k)
-        return b;
+    if (x[a] == k)
+        return a;
+    if (x[b] < k)
+        return 0;
     while (a + 1 < b) {
         long long m = (a + b)/2;
-        if (x[m] >= k)
+        if (x[m] < k)
             a = m;
         else
             b = m;
     }
-    if (x[a] >= k)
-        return a;
+    if (x[b] == k)
+        return b;
     else
         return 0;
 }
 
+long long binary_search_greater_than(long long n, long long k) {
+    long long a = 1, b = n;
+    if (x[a] > k)
+        return 0;
+    if (x[a] == k)
+        return a;
+    if (x[b] < k)
+        return 0;
+    while (a + 1 < b) {
+        long long m = (a + b)/2;
+        if (x[m] >= k)
+            b = m;
+        else
+            a = m;
+    }
+    if (x[b] >= k)
+        return b;
+    else
+        return 0;
+}
 
 int main() {
 
@@ -80,10 +78,12 @@ int main() {
         ++counter;
     }
 
-//    printf("%lli", counter);
-
-    printf("%lli", binary_search_3(counter - 1, k));
-//    fprintf(output, "%c %lli", c, k);
+    if (c == '<')
+        fprintf(output, "%lli", binary_search_less_than(counter - 1, k));
+    else if (c == '>')
+        fprintf(output, "%lli", binary_search_greater_than(counter - 1, k));
+    else if (c == '=')
+        fprintf(output, "%lli", binary_search_equal(counter - 1, k));
 
     fclose(input);
     fclose(output);
