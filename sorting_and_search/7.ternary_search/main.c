@@ -25,5 +25,8 @@ int main() {
     }
 
     fprintf(output, "%lli", ternary_search(0, counter));
+
+    fclose(input);
+    fclose(output);
     return 0;
 }
