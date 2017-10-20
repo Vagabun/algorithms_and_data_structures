@@ -19,11 +19,8 @@ void compute_pow() {
 }
 
 //compute polynomial hash function
-long long hash(const char* str) {
+long long hash_f(const char* str) {
     long long hash = 0;
-//    while (c = *str++) {
-//        printf("%lli ", c);
-//    }
     int j;
     for (j = 0; str[j] != '\0'; ++j)
         hash += (str[j] - 'à' + 1) * p_pow[j];
@@ -38,8 +35,8 @@ void make_hash_table() {
 }
 
 //search using linear probing
-long long search(const char* str) {
-    long long i = hash(str), j = 1;
+long long search_f(const char* str) {
+    long long i = hash_f(str), j = 1;
     while (1) {
         if (strcmp(hash_table[i], "EMPTY") == 0)
             return -1;
@@ -51,8 +48,8 @@ long long search(const char* str) {
 }
 
 //add value to hash table
-void add(const char* str) {
-    long long i = hash(str), j = 1;
+void add_f(const char* str) {
+    long long i = hash_f(str), j = 1;
     while (1) {
         if (strcmp(hash_table[i], "EMPTY") == 0) {
             strcpy(hash_table[i], str);
@@ -66,8 +63,8 @@ void add(const char* str) {
 }
 
 //delete value from hash table
-void delete(const char* str) {
-    long long i = search(str);
+void delete_f(const char* str) {
+    long long i = search_f(str);
     if (i == -1)
         return;
     strcpy(hash_table[i], "EMPTY");
@@ -75,7 +72,9 @@ void delete(const char* str) {
 
 int main() {
 
-    system("chcp 1251");
+    // for correct work with russian symbols in clion //
+//    system("chcp 1251");
+
     FILE *input = fopen("input.txt", "r");
     FILE *output = fopen("output.txt", "w");
 
@@ -87,13 +86,13 @@ int main() {
         fscanf(input, "%c", &c);
         if (c == '+') {
             fscanf(input, "%s", word);
-            add(word);
+            add_f(word);
         } else if (c == '-') {
             fscanf(input, "%s", word);
-            delete(word);
+            delete_f(word);
         } else if (c == '?') {
             fscanf(input, "%s", word);
-            long long s = search(word);
+            long long s = search_f(word);
             if (s == -1)
                 fprintf(output, "-%s\n", word);
             else
@@ -103,32 +102,9 @@ int main() {
             break;
     }
 
-//    if (strcmp(hash_table[10036], "EMPTY") == 0) printf("halooo");
-
-//    if (hash_table[20] == '') printf("blablabla");
-//    long long a = hash(hash_table[3]);
-//    printf("%lli", a);
-
-//    int j = 0;
-//    while (j < i) {
-//        printf("%s\n", hash_table[j]);
-//        ++j;
-//    }
-
-//    hash_table[0] = 'hello';
-//    char s[15];
-//    fscanf(input, "%s", s);
-//    strcpy(hash_table[0], s);
-//    hash_table[0] = *s;
-
-//    fscanf(input, "%s", s);
-//    strcpy(hash_table[1], s);
-
-//    hash_table[1] = *s;
-//    hash_table[0] = "hey";
-//    printf("%s %s", hash_table[0], hash_table[1]);
-
     fclose(input);
     fclose(output);
+
     return 0;
+
 }
