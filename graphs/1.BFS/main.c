@@ -65,6 +65,30 @@ void BFS(graph *g, int s) {
     while (!empty(&q)) {
         long long n = top(&q);
         dequeue(&q);
+        long long K = arr[n][0];
+        int i;
+        for (i = 1; i <= K; ++i) {
+            if (arr[n][i] == 0) // arr[n][i] ~ v
+                break;
+            else if (g->data[arr[n][i]].status == 0) {
+                g->data[arr[n][i]].status = 1;
+                g->data[arr[n][i]].dist = g->data[n].dist + 1;
+                g->data[arr[n][i]].parent = n;
+                g->data[arr[n][i]].root = s;
+                enqueue(arr[n][i], &q);
+            }
+        }
+    }
+}
+
+void read_data(FILE *input) {
+    fscanf(input, "%d", &N);
+    int i, j, K;
+    for (i = 1; i <= N; ++i) {
+        fscanf(input, "%d", &K);
+        arr[i][0] = K;
+        for (j = 1; j <= K; ++j)
+            fscanf(input, "%d", &arr[i][j]);
     }
 }
 
@@ -73,15 +97,17 @@ int main() {
     FILE *input = fopen("input.txt", "r");
     FILE *output = fopen("output.txt", "w");
 
-    fscanf(input, "%d", &N);
+    graph G;
+    read_data(input);
+    init(&G);
+    BFS(&G, N);
+    printf("\n");
 
-    graph g;
-    init(&g);
 
-
-
+//
+//    graph g;
+//    init(&g);
 //    int N;
-
 //    int i, j, K;
 //    for (i = 1; i <= N; ++i) {
 //        fscanf(input, "%d", &K);
