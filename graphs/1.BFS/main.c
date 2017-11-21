@@ -7,7 +7,7 @@ int N;
 
 //queue type and operations
 typedef struct {
-    unsigned long long q[MAX_SIZE];
+    long long q[MAX_SIZE];
     int top, tail;
 } queue;
 
@@ -20,11 +20,11 @@ int empty(queue *inst) {
     return (inst->top > inst->tail);
 }
 
-unsigned long long top(queue *inst) {
+long long top(queue *inst) {
     return inst->q[inst->top];
 }
 
-void enqueue(unsigned long long data, queue *inst) {
+void enqueue(long long data, queue *inst) {
     inst->tail += 1;
     inst->q[inst->tail] = data;
 }
@@ -52,6 +52,19 @@ void init(graph *g) {
         g->data[i].dist = INT_MAX;
         g->data[i].parent = 0;
         g->data[i].root = 0;
+    }
+}
+
+void BFS(graph *g, int s) {
+    g->data[s].status = 1;
+    g->data[s].dist = 0;
+    g->data[s].root = s;
+    queue q;
+    make(&q);
+    enqueue(s, &q);
+    while (!empty(&q)) {
+        long long n = top(&q);
+        dequeue(&q);
     }
 }
 
