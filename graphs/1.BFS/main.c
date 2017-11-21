@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <limits.h>
-#define MAX_SIZE 10010
+#define MAX_SIZE 1100
 
 int arr[1100][1100];
 int N;
 
 //queue type and operations
 typedef struct {
-    long long q[MAX_SIZE];
+    int q[MAX_SIZE];
     int top, tail;
 } queue;
 
@@ -20,11 +20,11 @@ int empty(queue *inst) {
     return (inst->top > inst->tail);
 }
 
-long long top(queue *inst) {
+int top(queue *inst) {
     return inst->q[inst->top];
 }
 
-void enqueue(long long data, queue *inst) {
+void enqueue(int data, queue *inst) {
     inst->tail += 1;
     inst->q[inst->tail] = data;
 }
@@ -63,9 +63,9 @@ void BFS(graph *g, int s) {
     make(&q);
     enqueue(s, &q);
     while (!empty(&q)) {
-        long long n = top(&q);
+        int n = top(&q);
         dequeue(&q);
-        long long K = arr[n][0];
+        int K = arr[n][0];
         int i;
         for (i = 1; i <= K; ++i) {
             if (arr[n][i] == 0) // arr[n][i] ~ v
@@ -81,6 +81,18 @@ void BFS(graph *g, int s) {
     }
 }
 
+int BFS_forest(graph *g) {
+    init(g);
+    int i, comp = 0;
+    for (i = 1; i <= N; ++i) {
+        if (g->data[i].status == 0) {
+            BFS(g, i);
+            ++comp;
+        }
+    }
+    return comp;
+}
+
 void read_data(FILE *input) {
     fscanf(input, "%d", &N);
     int i, j, K;
@@ -92,6 +104,29 @@ void read_data(FILE *input) {
     }
 }
 
+void path(graph *g, int v, FILE *output) {
+    int path[1100], i = 1, j;
+    if (g->data[v].dist == INT_MAX) {
+        fprintf(output, "%d\n", 0);
+        return;
+    }
+    int k = g->data[v].dist;
+    int origin_size = g->data[v].dist;
+    fprintf(output, "%d ", k);
+    while (k >= 0) {
+        path[i] = v;
+        ++i;
+        if (g->data[v].parent == N)
+            break;
+        else
+            v = g->data[v].parent;
+        --k;
+    }
+    for (j = origin_size; j > 0; --j)
+        fprintf(output, "%d ", path[j]);
+    fprintf(output, "\n");
+}
+
 int main() {
 
     FILE *input = fopen("input.txt", "r");
@@ -101,20 +136,10 @@ int main() {
     read_data(input);
     init(&G);
     BFS(&G, N);
-    printf("\n");
+    int i;
+    for (i = 1; i < N; ++i)
+        path(&G, i, output);
+    fprintf(output, "%d\n", BFS_forest(&G));
 
-
-//
-//    graph g;
-//    init(&g);
-//    int N;
-//    int i, j, K;
-//    for (i = 1; i <= N; ++i) {
-//        fscanf(input, "%d", &K);
-//        arr[i][0] = K;
-//        for (j = 1; j <= K; ++j)
-//            fscanf(input, "%d", &arr[i][j]);
-//    }
-//    printf("\n");
     return 0;
 }
