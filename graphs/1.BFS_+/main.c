@@ -2,7 +2,7 @@
 #include <limits.h>
 #define MAX_SIZE 1100
 
-int arr[1100][1100];
+int arr[MAX_SIZE][MAX_SIZE];
 int N;
 
 //queue type and operations
@@ -42,7 +42,7 @@ typedef struct {
 } vertex;
 
 typedef struct {
-    vertex data[1100];
+    vertex data[MAX_SIZE];
 } graph;
 
 void init(graph *g) {
@@ -105,7 +105,7 @@ void read_data(FILE *input) {
 }
 
 void path(graph *g, int v, FILE *output) {
-    int path[1100], i = 1, j;
+    int path[MAX_SIZE], i = 1, j;
     if (g->data[v].dist == INT_MAX) {
         fprintf(output, "%d\n", 0);
         return;
