@@ -8,10 +8,6 @@
 
 int deq[DEQ_MAXSIZE];
 int edges[MAXSIZE][MAXSIZE];
-//int vertices[MAXSIZE][MAXSIZE];
-int vertices[MAXSIZE];
-//int temporar[MAXSIZE][MAXSIZE];
-//int tem[100000][10000];
 
 int N, M;
 
@@ -64,10 +60,34 @@ typedef struct {
 
 void init_graph(graph *g) {
     int i;
-//    g->data = (vertex*)vertices;
     for (i = 1; i <= N; ++i) {
         g->data[i].parent = 0;
         g->data[i].dist = INT_MAX;
+    }
+}
+
+void zero_one_BFS(graph *g, int s) {
+    init_graph(g);
+    g->data[s].dist = 0;
+    deque dq;
+    init_deque(&dq);
+    push_back(&dq, s);
+    while (!empty(&dq)) {
+        int u = pop_front(&dq);
+        int k = edges[u][0];
+        int i;
+        for (i = 1; i <= k; ++i) {
+            if (edges[u][i] == ZERO || edges[u][i] == ONE) {
+                if (g->data[i].dist > g->data[u].dist + (edges[u][i] - 1)) {
+                    g->data[i].dist = g->data[u].dist + (edges[u][i] - 1);
+                    g->data[i].parent = u;
+                    if (edges[u][i] == ZERO)
+                        push_front(&dq, i);
+                    else
+                        push_back(&dq, i);
+                }
+            }
+        }
     }
 }
 
@@ -78,33 +98,30 @@ void read_data(FILE *input) {
         fscanf(input, "%d %d %d", &u, &v, &d);
         if (v > edges[u][0])
             edges[u][0] = v;
+        if (u > edges[v][0])
+            edges[v][0] = u;
         edges[u][v] = d + 1;
+        edges[v][u] = d + 1;
     }
 }
 
+void path(graph *g, FILE *output) {
+    if (g->data[1].dist == INT_MAX) {
+        fprintf(output, "%d\n", -1);
+        return;
+    }
+    fprintf(output, "%d\n", g->data[1].dist);
+}
+
 int main() {
-//    deque d;
-//    init_deque(&d);
-//    push_back(&d, 20);
-//    push_front(&d, 30);
-
-//    edges = malloc(sizeof(int*) * MAXSIZE);
-//    int i;
-//    for (i = 0; i < MAXSIZE; ++i)
-//        edges[i] = malloc(sizeof(int) * MAXSIZE);
-
-//    graph g;
-//    N = 10;
-//    init_graph(&g);
-//    edges[1][0] = 6;
-//    int i;
-//    for (i = 1; i <= MAXSIZE; ++i)
-//        edges[i] = -1;
 
     FILE *input = fopen("input.txt", "r");
-    read_data(input);
+    FILE *output = fopen("output.txt", "w");
 
-    printf("test\n");
+    read_data(input);
+    graph g;
+    zero_one_BFS(&g, N);
+    path(&g, output);
 
     return 0;
 }
