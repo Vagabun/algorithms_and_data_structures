@@ -82,6 +82,19 @@ void list_insert(adj_list *l, int u, int v, int d) {
     last->next = new_node;
 }
 
+void free_list(adj_list *l) {
+    int i;
+    for (i = 1; i <= N; ++i) {
+        node_t *tmp;
+        node_t *v = l->data[i];
+        while (v != NULL) {
+            tmp = v;
+            v = v->next;
+            free(tmp);
+        }
+    }
+}
+
 //graph type and operations
 typedef struct {
     int dist, parent;
@@ -122,8 +135,6 @@ void zero_one_BFS(graph *g, adj_list *l, int s) {
     }
 }
 
-
-
 void path(graph *g, FILE *output) {
     if (g->data[1].dist == INT_MAX) {
         fprintf(output, "%d\n", -1);
@@ -154,8 +165,10 @@ int main() {
     zero_one_BFS(&g, &adl, N);
     path(&g, output);
 
-    printf("\n");
+    free_list(&adl);
 
+    fclose(input);
+    fclose(output);
 
     return 0;
 }
