@@ -26,7 +26,7 @@ void DFS(graph *g, int u, int r) {
     g->a[u].root = r;
     for (i = 1; i <= adj_list[u][0]; ++i) {
         if (adj_list[u][i] == 0)
-            break;
+            continue;
         if (g->a[i].status == 0) {
             g->a[i].parent = u;
             DFS(g, i, r);
@@ -72,8 +72,7 @@ int main() {
 
     graph g;
     read_graph(input);
-    printf("%d\n", DFS_forest(&g));
+    fprintf(output, "%d\n", DFS_forest(&g));
 
-    printf("Hello, World!\n");
     return 0;
 }
