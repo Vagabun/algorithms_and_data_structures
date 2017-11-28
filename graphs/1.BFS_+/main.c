@@ -141,5 +141,8 @@ int main() {
         path(&G, i, output);
     fprintf(output, "%d\n", BFS_forest(&G));
 
+    fclose(input);
+    fclose(output);
+
     return 0;
 }
