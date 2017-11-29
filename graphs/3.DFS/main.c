@@ -44,6 +44,8 @@ int DFS_forest(graph *g) {
     init_graph(g);
     int i, k = 0;
     for (i = 1; i <= N; ++i) {
+        if (adj_list[i][0] == 0)
+            continue;
         if (g->a[i].status == 0) {
             DFS(g, i, i);
             ++k;
@@ -59,10 +61,9 @@ int compare(int a, int b) {
 }
 
 void read_graph(FILE *input) {
-    int i, u, v;
+    int u, v;
     fscanf(input, "%d", &N);
-    for (i = 1; i <= N; ++i) {
-        fscanf(input, "%d %d", &u, &v);
+    while (fscanf(input, "%d %d", &u, &v) != EOF) {
         adj_list[u][0] = compare(adj_list[u][0], v);
         adj_list[v][0] = compare(adj_list[v][0], u);
         adj_list[u][v] = 1;
