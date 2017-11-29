@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define MAXSIZE 1000
+#define MAXSIZE 1100
 
 int N, adj_list[MAXSIZE][MAXSIZE];
 
@@ -18,6 +18,11 @@ void init_graph(graph *g) {
         g->a[i].parent = 0;
         g->a[i].root = 0;
     }
+}
+void init_adj_list() {
+    int i;
+    for (i = 1; i <= N; ++i)
+        adj_list[i][0] = 0;
 }
 
 void DFS(graph *g, int u, int r) {
@@ -71,8 +76,12 @@ int main() {
     FILE *output = fopen("output.txt", "w");
 
     graph g;
+    init_adj_list();
     read_graph(input);
     fprintf(output, "%d\n", DFS_forest(&g));
+
+    fclose(input);
+    fclose(output);
 
     return 0;
 }
