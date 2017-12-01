@@ -44,8 +44,6 @@ int DFS_forest(graph *g) {
     init_graph(g);
     int i, k = 0;
     for (i = 1; i <= N; ++i) {
-        if (adj_list[i][0] == 0)
-            continue;
         if (g->a[i].status == 0) {
             DFS(g, i, i);
             ++k;
