@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #define MAXSIZE 100100
 
-int N, tm;
+int vertices[MAXSIZE] = {0};
+
+int N, tm, inverted_bfs_flag = 0;
 
 //adjacency list type and operations
 typedef struct node {
@@ -86,16 +88,33 @@ void dfs(graph *g, adj_list *l, int u, int r) {
     }
     tm++;
     g->data[u].t2 = tm;
+    if (inverted_bfs_flag != 1) {
+        vertices[0]++;
+        vertices[vertices[0]] = u;
+    }
     g->data[u].status = 2;
 }
 
-void dfs_forest(graph *g, adj_list *l) {
+void dfs_forest_inverted(graph *g, adj_list *l) {
     init_graph(g);
     int i;
     for (i = 1; i <= N; ++i) {
         if (g->data[i].status == 0)
             dfs(g, l, i, i);
     }
+    inverted_bfs_flag = 1;
+}
+
+int dfs_forest_original(graph *g, adj_list *l) {
+    init_graph(g);
+    int i, k = 0;
+    for (i = vertices[0]; i >= 1; --i) {
+        if (g->data[vertices[i]].status == 0) {
+            dfs(g, l, vertices[i], vertices[i]);
+            k++;
+        }
+    }
+    return k;
 }
 
 void read_data(FILE *input, adj_list *l1, adj_list *l2) {
@@ -120,15 +139,19 @@ int main() {
 
     adj_list original;
     adj_list inverted;
-    graph g;
+    graph *g_inv = malloc(sizeof(graph));
+    graph *g_orig = malloc(sizeof(graph));
 
     read_data(input, &original, &inverted);
-    dfs_forest(&g, &inverted);
+    dfs_forest_inverted(g_inv, &inverted);
 
-    printf("test\n");
+    fprintf(output, "%d\n", dfs_forest_original(g_orig, &original));
 
     free_list(&original);
     free_list(&inverted);
+    free(g_inv);
+    free(g_orig);
+
     fclose(input);
     fclose(output);
     return 0;
