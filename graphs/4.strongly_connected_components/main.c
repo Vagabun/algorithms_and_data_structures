@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #define MAXSIZE 100100
 
-int N;
+int N, tm;
 
 //adjacency list type and operations
 typedef struct node {
@@ -54,12 +54,49 @@ void free_list(adj_list *l) {
 
 //graph type and operations
 typedef struct {
-    int dist, parent;
+    int status, parent, root, t1, t2;
 } vertex;
 
 typedef struct {
     vertex data[MAXSIZE];
 } graph;
+
+void init_graph(graph *g) {
+    int i;
+    for (i = 1; i <= N; ++i) {
+        g->data[i].status = 0;
+        g->data[i].parent = 0;
+        g->data[i].root = 0;
+    }
+    tm = 0;
+}
+
+void dfs(graph *g, adj_list *l, int u, int r) {
+    g->data[u].status = 1;
+    tm++;
+    g->data[u].t1 = tm;
+    g->data[u].root = r;
+    node_t *v = l->data[u];
+    while (v != NULL) {
+        if (g->data[v->vrtx].status == 0) {
+            g->data[v->vrtx].parent = u;
+            dfs(g, l, v->vrtx, r);
+        }
+        v = v->next;
+    }
+    tm++;
+    g->data[u].t2 = tm;
+    g->data[u].status = 2;
+}
+
+void dfs_forest(graph *g, adj_list *l) {
+    init_graph(g);
+    int i;
+    for (i = 1; i <= N; ++i) {
+        if (g->data[i].status == 0)
+            dfs(g, l, i, i);
+    }
+}
 
 void read_data(FILE *input, adj_list *l1, adj_list *l2) {
     int i, j, k, v;
@@ -83,8 +120,10 @@ int main() {
 
     adj_list original;
     adj_list inverted;
+    graph g;
 
     read_data(input, &original, &inverted);
+    dfs_forest(&g, &inverted);
 
     printf("test\n");
 
