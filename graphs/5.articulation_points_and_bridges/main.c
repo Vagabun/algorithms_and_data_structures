@@ -2,9 +2,12 @@
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define MAXSIZE 1010
 
-int adj_list[1010][1010];
-int connected_components[1010] = { 0 };
+int adj_list[MAXSIZE][MAXSIZE];
+int connected_components[MAXSIZE] = { 0 };
+int artic_points[MAXSIZE] = { 0 };
+int bc_comp[MAXSIZE] = { 0 };
 int N, tm;
 
 typedef struct {
@@ -12,7 +15,7 @@ typedef struct {
 } vertex;
 
 typedef struct {
-    vertex data[1010];
+    vertex data[MAXSIZE];
 } graph;
 
 void init_adj_list() {
@@ -52,7 +55,19 @@ void dfs(graph *g, int u, int r) {
     }
     if ((u == g->data[u].root && pow > 1) || (u != g->data[u].root && l_max >= g->data[u].t1)) {
         g->data[u].art_point = 1;
-        printf("%d - art point\n", u);
+        artic_points[u]++;
+    }
+}
+
+void bc_components(graph *g) {
+    int i = 1;
+    if (g->data[i].art_point) {
+        bc_comp[i]++;
+        int j;
+        for (j = 1; j <= adj_list[i][0]; ++j) {
+            if (g->data[adj_list[i][j]].art_point == 0)
+                bc_comp[adj_list[i][j]]++;
+        }
     }
 }
 
@@ -104,7 +119,24 @@ int main() {
     graph G;
     read_data(input);
     articulation_points(&G);
+    bc_components(&G);
+
+    int i;
+    for (i = 1; i <= N; ++i) {
+        if (artic_points[i])
+            fprintf(output, "%d ", i);
+    }
+    fprintf(output, "\n");
+
     bridges(&G);
-    printf("test\n");
+
+    for (i = 1; i <= N; ++i) {
+        if (bc_comp[i])
+            fprintf(output, "%d ", i);
+    }
+    fprintf(output, "\n");
+
+    fclose(input);
+    fclose(output);
     return 0;
 }
