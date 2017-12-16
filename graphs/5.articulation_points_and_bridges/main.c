@@ -3,7 +3,8 @@
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
-int adj_list[1000][1000];
+int adj_list[1010][1010];
+int connected_components[1010] = { 0 };
 int N, tm;
 
 typedef struct {
@@ -11,7 +12,7 @@ typedef struct {
 } vertex;
 
 typedef struct {
-    vertex data[1000];
+    vertex data[1010];
 } graph;
 
 void init_adj_list() {
@@ -56,17 +57,23 @@ void dfs(graph *g, int u, int r) {
 }
 
 void bridges(graph *g) {
-//    int i, j;
-//    for (i = 1; i <= N; ++i) {
-//        if (g->data[i].art_point == 1) {
-//            for (j = 1; j <= adj_list[i][0]; ++j) {
-//                if (g->data[adj_list[i][j]].low >= g->data[i].t1)
-//                    printf("%d %d - bridge\n", i, adj_list[i][j]);
-//                else if (g->data[i].low >= g->data[adj_list[i][j]].t1)
-//                    printf("%d %d - bridge\n", i, adj_list[i][j]);
-//            }
-//        }
-//    }
+    int i, j;
+    for (i = 1; i <= N; ++i) {
+        if (g->data[i].art_point == 1) {
+            for (j = 1; j <= adj_list[i][0]; ++j) {
+                if (g->data[adj_list[i][j]].low > g->data[i].t1)
+                    printf("%d %d - bridge\n", i, adj_list[i][j]);
+            }
+        }
+        else if (adj_list[i][0] == 1 && adj_list[adj_list[i][1]][0] == 1) {
+            if (connected_components[i] == 0 && connected_components[adj_list[i][1]] == 0) {
+                if (g->data[adj_list[i][1]].art_point == 0)
+                    printf("%d %d - bridge\n", i, adj_list[i][1]);
+                connected_components[i]++;
+                connected_components[adj_list[i][1]]++;
+            }
+        }
+    }
 }
 
 void articulation_points(graph *g) {
