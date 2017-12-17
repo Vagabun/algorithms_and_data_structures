@@ -5,9 +5,10 @@
 #define MAXSIZE 1010
 
 int adj_list[MAXSIZE][MAXSIZE];
-int connected_components[MAXSIZE] = { 0 };
+int connected_components_flag[MAXSIZE] = { 0 };
 int artic_points[MAXSIZE] = { 0 };
 int bc_comp[MAXSIZE] = { 0 };
+int bridges_stor[MAXSIZE][MAXSIZE];
 int N, tm;
 
 typedef struct {
@@ -31,6 +32,12 @@ void init_graph(graph *g) {
         g->data[i].parent = 0;
         g->data[i].art_point = 0;
     }
+}
+
+void init_bridges_stor() {
+    int i;
+    for (i = 1; i <= N; ++i)
+        bridges_stor[i][0] = 0;
 }
 
 void dfs(graph *g, int u, int r) {
@@ -73,19 +80,28 @@ void bc_components(graph *g) {
 
 void bridges(graph *g) {
     int i, j;
+    init_bridges_stor();
     for (i = 1; i <= N; ++i) {
-        if (g->data[i].art_point == 1) {
-            for (j = 1; j <= adj_list[i][0]; ++j) {
-                if (g->data[adj_list[i][j]].low > g->data[i].t1)
-                    printf("%d %d - bridge\n", i, adj_list[i][j]);
+        for (j = 1; j <= adj_list[i][0]; ++j) {
+            if (g->data[i].art_point == 1 || g->data[j].art_point == 1) {
+                if (g->data[adj_list[i][j]].low > g->data[i].t1) {
+                    bridges_stor[i][adj_list[i][j]]++;
+                    bridges_stor[i][0] = MAX(bridges_stor[i][0], adj_list[i][j]);
+                }
+                else if (g->data[i].low > g->data[adj_list[i][j]].t1) {
+                    bridges_stor[adj_list[i][j]][i]++;
+                    bridges_stor[adj_list[i][j]][0] = MAX(bridges_stor[adj_list[i][j]][0], i);
+                }
             }
         }
-        else if (adj_list[i][0] == 1 && adj_list[adj_list[i][1]][0] == 1) {
-            if (connected_components[i] == 0 && connected_components[adj_list[i][1]] == 0) {
-                if (g->data[adj_list[i][1]].art_point == 0)
-                    printf("%d %d - bridge\n", i, adj_list[i][1]);
-                connected_components[i]++;
-                connected_components[adj_list[i][1]]++;
+        if (adj_list[i][0] == 1 && adj_list[adj_list[i][1]][0] == 1) {
+            if (connected_components_flag[i] == 0 && connected_components_flag[adj_list[i][1]] == 0) {
+                if (g->data[adj_list[i][1]].art_point == 0) {
+                    bridges_stor[i][adj_list[i][1]]++;
+                    bridges_stor[i][0] = MAX(bridges_stor[i][0], adj_list[i][1]);
+                }
+                connected_components_flag[i]++;
+                connected_components_flag[adj_list[i][1]]++;
             }
         }
     }
@@ -120,6 +136,7 @@ int main() {
     read_data(input);
     articulation_points(&G);
     bc_components(&G);
+    bridges(&G);
 
     int i;
     for (i = 1; i <= N; ++i) {
@@ -128,13 +145,21 @@ int main() {
     }
     fprintf(output, "\n");
 
-    bridges(&G);
+    for (i = 1; i <=N; ++i) {
+        if (bridges_stor[i][0] != 0) {
+            int j;
+            for (j = 1; j <= bridges_stor[i][0]; ++j) {
+                if (bridges_stor[i][j] == 0)
+                    continue;
+                fprintf(output, "%d %d\n", i, j);
+            }
+        }
+    }
 
     for (i = 1; i <= N; ++i) {
         if (bc_comp[i])
             fprintf(output, "%d ", i);
     }
-    fprintf(output, "\n");
 
     fclose(input);
     fclose(output);
