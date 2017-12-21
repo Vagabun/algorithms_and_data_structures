@@ -9,7 +9,7 @@ int connected_components_flag[MAXSIZE] = { 0 };
 int artic_points[MAXSIZE] = { 0 };
 int bc_comp[MAXSIZE] = { 0 };
 int bridges_stor[MAXSIZE][MAXSIZE];
-int N, tm;
+int N, tm, artic_points_counter = 0, bridges_counter = 0;
 
 typedef struct {
     int status, parent, root, art_point, t1, low;
@@ -63,6 +63,7 @@ void dfs(graph *g, int u, int r) {
     if ((u == g->data[u].root && pow > 1) || (u != g->data[u].root && l_max >= g->data[u].t1)) {
         g->data[u].art_point = 1;
         artic_points[u]++;
+        artic_points_counter++;
     }
 }
 
@@ -76,6 +77,12 @@ void bc_components(graph *g) {
                 bc_comp[adj_list[i][j]]++;
         }
     }
+    else if (artic_points_counter == 0) {
+        //then all graph is biconnected
+        int k;
+        for (k = 1; k <= N; ++k)
+            bc_comp[k]++;
+    }
 }
 
 void bridges(graph *g) {
@@ -87,10 +94,12 @@ void bridges(graph *g) {
                 if (g->data[adj_list[i][j]].low > g->data[i].t1) {
                     bridges_stor[i][adj_list[i][j]]++;
                     bridges_stor[i][0] = MAX(bridges_stor[i][0], adj_list[i][j]);
+                    bridges_counter++;
                 }
                 else if (g->data[i].low > g->data[adj_list[i][j]].t1) {
                     bridges_stor[adj_list[i][j]][i]++;
                     bridges_stor[adj_list[i][j]][0] = MAX(bridges_stor[adj_list[i][j]][0], i);
+                    bridges_counter++;
                 }
             }
         }
@@ -99,6 +108,7 @@ void bridges(graph *g) {
                 if (g->data[adj_list[i][1]].art_point == 0) {
                     bridges_stor[i][adj_list[i][1]]++;
                     bridges_stor[i][0] = MAX(bridges_stor[i][0], adj_list[i][1]);
+                    bridges_counter++;
                 }
                 connected_components_flag[i]++;
                 connected_components_flag[adj_list[i][1]]++;
@@ -139,19 +149,23 @@ int main() {
     bridges(&G);
 
     int i;
-    for (i = 1; i <= N; ++i) {
-        if (artic_points[i])
-            fprintf(output, "%d ", i);
+    if (artic_points_counter != 0) {
+        for (i = 1; i <= N; ++i) {
+            if (artic_points[i])
+                fprintf(output, "%d ", i);
+        }
+        fprintf(output, "\n");
     }
-    fprintf(output, "\n");
 
-    for (i = 1; i <=N; ++i) {
-        if (bridges_stor[i][0] != 0) {
-            int j;
-            for (j = 1; j <= bridges_stor[i][0]; ++j) {
-                if (bridges_stor[i][j] == 0)
-                    continue;
-                fprintf(output, "%d %d\n", i, j);
+    if (bridges_counter != 0) {
+        for (i = 1; i <=N; ++i) {
+            if (bridges_stor[i][0] != 0) {
+                int j;
+                for (j = 1; j <= bridges_stor[i][0]; ++j) {
+                    if (bridges_stor[i][j] == 0)
+                        continue;
+                    fprintf(output, "%d %d\n", i, j);
+                }
             }
         }
     }
