@@ -9,8 +9,33 @@ int connected_components_flag[MAXSIZE] = { 0 };
 int artic_points[MAXSIZE] = { 0 };
 int bc_comp[MAXSIZE] = { 0 };
 int bridges_stor[MAXSIZE][MAXSIZE];
-int N, tm, artic_points_counter = 0, bridges_counter = 0;
+int N, tm, artic_points_counter = 0, bridges_counter = 0, bcc_flag = 0;
 
+//stack data type for using in search of biconnected components
+typedef struct {
+    int data[MAXSIZE];
+    int top;
+} stack;
+
+int isEmpty(stack *s) {
+    if (s->top == -1) return 1;
+    else return 0;
+}
+
+void push(stack *s, int vrtx) {
+    ++s->top;
+    s->data[s->top] = vrtx;
+}
+
+void pop(stack *s) {
+    --s->top;
+}
+
+int peek(stack *s) {
+    return s->data[s->top];
+}
+
+//graph and vertex data type
 typedef struct {
     int status, parent, root, art_point, t1, low;
 } vertex;
@@ -40,6 +65,7 @@ void init_bridges_stor() {
         bridges_stor[i][0] = 0;
 }
 
+//dfs, bridges, bcc, a points
 void dfs(graph *g, int u, int r) {
     tm = tm + 1;
     g->data[u].t1 = tm;
@@ -67,17 +93,45 @@ void dfs(graph *g, int u, int r) {
     }
 }
 
-void bc_components(graph *g) {
-    int i = 1;
-    if (g->data[i].art_point) {
-        bc_comp[i]++;
-        int j;
-        for (j = 1; j <= adj_list[i][0]; ++j) {
-            if (g->data[adj_list[i][j]].art_point == 0)
-                bc_comp[adj_list[i][j]]++;
+void dfs_bcc(graph *g, stack *s, int u, int r) {
+    if (u == 1)
+        bcc_flag = 1; //if we have vertex 1 in stack
+    g->data[u].status = 1;
+    g->data[u].root = r;
+    int i;
+    for (i = 1; i <= adj_list[u][0]; ++i) {
+        if (g->data[adj_list[u][i]].status == 0) {
+            g->data[adj_list[u][i]].parent = u;
+            push(s, adj_list[u][i]);
+            dfs_bcc(g, s, adj_list[u][i], r);
+        }
+        else if (u == r) {
+            return;
         }
     }
-    else if (artic_points_counter == 0) {
+}
+
+void bc_components(graph *g_a_points, graph *g_bcc, stack *s) {
+    if (artic_points_counter > 0) {
+        s->top = -1;
+        int i;
+        for (i = 1; i <= N; ++i) {
+            if (g_a_points->data[i].art_point) {
+                push(s, i);
+                dfs_bcc(g_bcc, s, i, i);
+                if (bcc_flag) {
+                    while (!isEmpty(s)) {
+                        bc_comp[peek(s)]++;
+                        pop(s);
+                    }
+                    return;
+                }
+                else
+                    s->top = -1;
+            }
+        }
+    }
+    else {
         //then all graph is biconnected
         int k;
         for (k = 1; k <= N; ++k)
@@ -91,14 +145,10 @@ void bridges(graph *g) {
     for (i = 1; i <= N; ++i) {
         for (j = 1; j <= adj_list[i][0]; ++j) {
             if (g->data[i].art_point == 1 || g->data[j].art_point == 1) {
-                if (g->data[adj_list[i][j]].low > g->data[i].t1) {
-                    bridges_stor[i][adj_list[i][j]]++;
-                    bridges_stor[i][0] = MAX(bridges_stor[i][0], adj_list[i][j]);
-                    bridges_counter++;
-                }
-                else if (g->data[i].low > g->data[adj_list[i][j]].t1) {
-                    bridges_stor[adj_list[i][j]][i]++;
-                    bridges_stor[adj_list[i][j]][0] = MAX(bridges_stor[adj_list[i][j]][0], i);
+                if ((g->data[adj_list[i][j]].low > g->data[i].t1) || (g->data[i].low > g->data[adj_list[i][j]].t1)) {
+                    int min = MIN(i, adj_list[i][j]), max = MAX(i, adj_list[i][j]);
+                    bridges_stor[min][max]++;
+                    bridges_stor[min][0] = MAX(bridges_stor[min][0], max);
                     bridges_counter++;
                 }
             }
@@ -142,11 +192,12 @@ int main() {
     FILE *input = fopen("input.txt", "r");
     FILE *output = fopen("output.txt", "w");
 
-    graph G;
+    graph G_a_points, G_bcc;
+    stack S;
     read_data(input);
-    articulation_points(&G);
-    bc_components(&G);
-    bridges(&G);
+    articulation_points(&G_a_points);
+    bridges(&G_a_points);
+    bc_components(&G_a_points, &G_bcc, &S);
 
     int i;
     if (artic_points_counter != 0) {
