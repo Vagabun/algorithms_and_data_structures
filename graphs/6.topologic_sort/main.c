@@ -29,7 +29,6 @@ int peek(stack *st) {
     return st->data[st->top];
 }
 
-
 //adjacency list type and operations
 typedef struct node {
     int vrtx;
@@ -87,41 +86,59 @@ void init_graph(graph *g) {
         g->data[i].status = 0;
 }
 
-int dfs(graph *g, adj_list *a, int u) {
+int dfs(graph *g, adj_list *a, stack *s, int u) {
     g->data[u].status = 1;
     node_t *v = a->array[u].head;
     while (v != NULL) {
         if (g->data[v->vrtx].status == 1)
             return 0;
         if (g->data[v->vrtx].status == 0) {
-            if (!dfs(g, a, v->vrtx))
+            if (!dfs(g, a, s, v->vrtx))
                 return 0;
         }
         v = v->next;
     }
     g->data[u].status = 2;
-    //put into stack
-    //return 1
+    push(s, u);
+    return 1;
 }
 
-int topsort(graph *g) {
+int topsort(graph *g, adj_list *a) {
     init_graph(g);
-
+    stack S;
+    S.top = -1;
+    int u;
+    for (u = 1; u <= N; ++u) {
+        if (g->data[u].status == 0) {
+            if (!dfs(g, a, &S, u))
+                return 0;
+        }
+    }
+    int i = 0;
+    while (!isEmpty(&S)) {
+        i++;
+        printf("%d ", peek(&S));
+        pop(&S);
+    }
 }
 
 int main() {
     FILE *input = fopen("input.txt", "r");
     FILE *output = fopen("output.txt", "w");
 
+    fscanf(input, "%d %d", &N, &M);
+
     adj_list *original = malloc(sizeof(adj_list));
     init_adj_list(original);
 
     int i, u, v;
-    fscanf(input, "%d %d", &N, &M);
     for (i = 1; i <= M; ++i) {
         fscanf(input, "%d %d", &u, &v);
         adj_list_insert(original, u, v);
     }
+
+    graph G;
+    topsort(&G, original);
 
 //    graph G;
 //    init_graph(&G);
