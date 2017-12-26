@@ -103,21 +103,21 @@ int dfs(graph *g, adj_list *a, stack *s, int u) {
     return 1;
 }
 
-int topsort(graph *g, adj_list *a) {
+void topsort(graph *g, adj_list *a, FILE *output) {
     init_graph(g);
     stack S;
     S.top = -1;
     int u;
     for (u = 1; u <= N; ++u) {
         if (g->data[u].status == 0) {
-            if (!dfs(g, a, &S, u))
-                return 0;
+            if (!dfs(g, a, &S, u)) {
+                fprintf(output, "-1");
+                return;
+            }
         }
     }
-    int i = 0;
     while (!isEmpty(&S)) {
-        i++;
-        printf("%d ", peek(&S));
+        fprintf(output, "%d ", peek(&S));
         pop(&S);
     }
 }
@@ -138,12 +138,10 @@ int main() {
     }
 
     graph G;
-    topsort(&G, original);
+    topsort(&G, original, output);
 
-//    graph G;
-//    init_graph(&G);
-//
-//    printf("Hello, World!\n");
+    free_list(original);
+    free(original);
 
     fclose(input);
     fclose(output);
