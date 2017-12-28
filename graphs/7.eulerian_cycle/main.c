@@ -71,21 +71,6 @@ void adj_list_insert(adj_list *a_list, int source, int destination) {
     a_list->array[source].head = new_node;
 }
 
-//graph type and operations
-typedef struct {
-    int status;
-} vertex;
-
-typedef struct {
-    vertex data[MAXSIZE];
-} graph;
-
-void init_graph(graph *g) {
-    int i;
-    for (i = 1; i <= N; ++i)
-        g->data[i].status = 0;
-}
-
 void cycle(adj_list *l, stack *st, int u) {
     node_t *v = l->array[u].head;
     while (v != NULL) {
@@ -100,9 +85,7 @@ void cycle(adj_list *l, stack *st, int u) {
 }
 
 void euler(adj_list *l, stack *st, int u) {
-    stack S;
-    S.top = -1;
-    cycle(l, &S, u);
+    cycle(l, st, u);
 }
 
 int main() {
@@ -125,7 +108,22 @@ int main() {
     }
 
     S.top = -1;
-    euler(original, 1);
+    euler(original, &S, 1);
+
+    if (isEmpty(&S))
+        fprintf(output, "-1");
+    else {
+        while (!isEmpty(&S)) {
+            fprintf(output, "%d ", peek(&S));
+            pop(&S);
+        }
+    }
+
+    free_list(original);
+    free(original);
+
+    fclose(input);
+    fclose(output);
 
     return 0;
 }
