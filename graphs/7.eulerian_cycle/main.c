@@ -110,7 +110,7 @@ int main() {
     S.top = -1;
     euler(original, &S, 1);
 
-    if (isEmpty(&S))
+    if (peek(&S) != S.data[0])
         fprintf(output, "-1");
     else {
         while (!isEmpty(&S)) {
