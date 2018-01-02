@@ -3,11 +3,11 @@
 
 #define MAXSIZE 100010
 
-int N;
+int N, temp[MAXSIZE];
 
 //stack data type and operations
 typedef struct {
-    int data[MAXSIZE];
+    int data[5000010];
     int top;
 } stack;
 
@@ -31,7 +31,7 @@ int peek(stack *st) {
 
 //adjacency list type and operations
 typedef struct node {
-    int vrtx;
+    int vrtx, is_deleted;
     struct node *next;
 } node_t;
 
@@ -67,6 +67,7 @@ void free_list(adj_list *l) {
 void adj_list_insert(adj_list *a_list, int source, int destination) {
     node_t *new_node = malloc(sizeof(node_t));
     new_node->vrtx = destination;
+    new_node->is_deleted = 0;
     new_node->next = a_list->array[source].head;
     a_list->array[source].head = new_node;
 }
@@ -74,10 +75,9 @@ void adj_list_insert(adj_list *a_list, int source, int destination) {
 void cycle(adj_list *l, stack *st, int u) {
     node_t *v = l->array[u].head;
     while (v != NULL) {
-        if (v->vrtx != 0) {
-            int vrtx_v = v->vrtx;
-            v->vrtx = 0;
-            cycle(l, st, vrtx_v);
+        if (!v->is_deleted) {
+            v->is_deleted = 1;
+            cycle(l, st, v->vrtx);
         }
         v = v->next;
     }
@@ -96,15 +96,17 @@ int main() {
     adj_list *original = malloc(sizeof(adj_list));
     stack S;
 
-    int i, j, k, v;
+    int i, j, k, v, size;
     fscanf(input, "%d", &N);
     init_adj_list(original);
     for (i = 1; i <= N; ++i) {
         fscanf(input, "%d", &k);
-        for (j = 1; j <= k; ++j) {
-            fscanf(input, "%d", &v);
-            adj_list_insert(original, i, v);
-        }
+        size = 0;
+        for (j = 1; j <= k; ++j)
+            fscanf(input, "%d", &temp[size++]);
+//            adj_list_insert(original, i, v);
+        for (j = size - 1; j >= 0; --j)
+            adj_list_insert(original, i, temp[j]);
     }
 
     S.top = -1;
