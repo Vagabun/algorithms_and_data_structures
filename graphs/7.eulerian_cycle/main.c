@@ -2,12 +2,13 @@
 #include <stdlib.h>
 
 #define MAXSIZE 100010
+#define STACKSIZE 5000010
 
 int N, temp[MAXSIZE];
 
 //stack data type and operations
 typedef struct {
-    int data[5000010];
+    int data[STACKSIZE];
     int top;
 } stack;
 
@@ -96,7 +97,7 @@ int main() {
     adj_list *original = malloc(sizeof(adj_list));
     stack S;
 
-    int i, j, k, v, size;
+    int i, j, k, size;
     fscanf(input, "%d", &N);
     init_adj_list(original);
     for (i = 1; i <= N; ++i) {
@@ -104,7 +105,6 @@ int main() {
         size = 0;
         for (j = 1; j <= k; ++j)
             fscanf(input, "%d", &temp[size++]);
-//            adj_list_insert(original, i, v);
         for (j = size - 1; j >= 0; --j)
             adj_list_insert(original, i, temp[j]);
     }
