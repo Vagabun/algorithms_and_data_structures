@@ -13,8 +13,10 @@ typedef struct {
 } stack;
 
 int isEmpty(stack *st) {
-    if (st->top == -1) return 1;
-    else return 0;
+    if (st->top == -1)
+        return 1;
+    else
+        return 0;
 }
 
 void push(stack *st, int v) {
